@@ -29,7 +29,13 @@ export const Header = ({
   const navigate = useNavigate();
 
   const { user, logout } = useAuth();
-  const { workspaces } = useLoaderData() as { workspaces: Workspace[] };
+  const data = useLoaderData() as
+  | { workspaces: Workspace[] }
+  | undefined;
+
+  console.log(user);
+
+  const workspaces = data?.workspaces ?? [];
   const isOnWorkspacePage = useLocation().pathname.includes("/workspace");
 
   const handleOnClick = (workspace: Workspace) => {
@@ -101,10 +107,10 @@ export const Header = ({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="rounded-full border p-1 w-8 h-8">
-                <Avatar className="w-8 h-8">
-                  <AvatarImage src={user?.profilePicture} alt={user?.name} />
-                  <AvatarFallback className="bg-primary text-primary-foreground">
+              <button className="rounded-full border-none p-1 w-8 h-11">
+                <Avatar className="w-8 h-8 border-none">
+                  <AvatarImage className="border-none" src={user?.profilePicture} onError={() => console.log("Failed:", user?.profilePicture)} />
+                  <AvatarFallback className="bg-primary text-primary-foreground border-none">
                     {user?.name?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>

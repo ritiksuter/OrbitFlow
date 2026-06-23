@@ -41,6 +41,16 @@ const ProjectDetails = () => {
       </div>
     );
 
+    if (!data) {
+      return (
+        <div className="flex items-center justify-center h-screen">
+        <h1 className="text-xl font-semibold">
+          Project not found
+        </h1>
+      </div>
+  );
+  
+}
   const { project, tasks } = data;
   const projectProgress = getProjectProgress(tasks);
 

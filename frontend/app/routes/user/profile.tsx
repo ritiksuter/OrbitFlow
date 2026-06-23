@@ -33,6 +33,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useRef, useState } from "react";
 
 const changePasswordSchema = z
   .object({
@@ -65,6 +66,8 @@ const Profile = () => {
   };
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [uploading, setUploading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
@@ -98,7 +101,7 @@ const Profile = () => {
     changePassword(values, {
       onSuccess: () => {
         toast.success(
-          "Password updated successfully. You will be logged out. Please login again."
+          "Password updated successfully. You will be logged out. Please login again.",
         );
         form.reset();
 
@@ -129,8 +132,48 @@ const Profile = () => {
           toast.error(errorMessage);
           console.log(error);
         },
-      }
+      },
     );
+  };
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    try {
+      setUploading(true);
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "OrbitFlow");
+
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/dxbcvga0h/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      const data = await response.json();
+
+      console.log("Status:", response.status);
+      console.log("Cloudinary:", data);
+
+      if (!response.ok) {
+        toast.error(data.error?.message || "Upload failed");
+        return;
+      }
+
+      profileForm.setValue("profilePicture", data.secure_url);
+
+      toast.success("Image uploaded successfully");
+    } catch (error) {
+      toast.error("Failed to upload image");
+    } finally {
+      setUploading(false);
+    }
   };
 
   if (isPending)
@@ -166,6 +209,7 @@ const Profile = () => {
               <div className="flex items-center space-x-4 mb-6">
                 <Avatar className="h-20 w-20 bg-gray-600">
                   <AvatarImage
+                    className="object-cover"
                     src={
                       profileForm.watch("profilePicture") ||
                       user?.profilePicture
@@ -178,23 +222,25 @@ const Profile = () => {
                 </Avatar>
                 <div>
                   <input
+                    ref={inputRef}
                     id="avatar-upload"
                     type="file"
                     accept="image/*"
-                    // onChange={handleAvatarChange}
-                    // disabled={uploading || isUpdatingProfile}
+                    onChange={handleAvatarChange}
+                    disabled={uploading || isUpdatingProfile}
                     style={{ display: "none" }}
                   />
                   <Button
                     type="button"
                     size="sm"
                     variant="outline"
-                    onClick={() =>
-                      document.getElementById("avatar-upload")?.click()
-                    }
-                    // disabled={uploading || isUpdatingProfile}
+                    onClick={() => {
+                      console.log("Button");
+                      inputRef.current?.click();
+                    }}
+                    disabled={uploading || isUpdatingProfile}
                   >
-                    Change Avatar
+                    {uploading ? "Uploading..." : "Change Avatar"}
                   </Button>
                 </div>
               </div>

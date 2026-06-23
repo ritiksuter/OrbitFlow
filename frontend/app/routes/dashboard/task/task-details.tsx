@@ -41,7 +41,8 @@ const TaskDetails = () => {
     isLoading: boolean;
   };
   const { mutate: watchTask, isPending: isWatching } = useWatchTaskMutation();
-  const { mutate: achievedTask, isPending: isAchieved } = useAchievedTaskMutation();
+  const { mutate: achievedTask, isPending: isAchieved } =
+    useAchievedTaskMutation();
   const { mutate: deleteTask, isPending: isDeleting } = useDeleteTaskMutation();
 
   if (isLoading) {
@@ -62,7 +63,7 @@ const TaskDetails = () => {
 
   const { task, project } = data;
   const isUserWatching = task?.watchers?.some(
-    (watcher) => watcher._id.toString() === user?._id.toString()
+    (watcher) => watcher._id.toString() === user?._id.toString(),
   );
 
   const goBack = () => navigate(-1);
@@ -79,7 +80,7 @@ const TaskDetails = () => {
         onError: () => {
           toast.error("Failed to watch task");
         },
-      }
+      },
     );
   };
 
@@ -93,7 +94,7 @@ const TaskDetails = () => {
         onError: () => {
           toast.error("Failed to achieve task");
         },
-      }
+      },
     );
   };
 
@@ -109,7 +110,7 @@ const TaskDetails = () => {
         onError: () => {
           toast.error("Failed to delete task");
         },
-      }
+      },
     );
   };
 
@@ -119,7 +120,9 @@ const TaskDetails = () => {
         <div className="flex flex-col md:flex-row md:items-center gap-2">
           <BackButton />
 
-          <h1 className="text-xl md:text-2xl font-bold break-words">{task.title}</h1>
+          <h1 className="text-xl md:text-2xl font-bold break-words">
+            {task.title}
+          </h1>
 
           {task.isArchived && (
             <Badge className="ml-2 mt-2 md:mt-0" variant={"outline"}>
@@ -219,10 +222,10 @@ const TaskDetails = () => {
               assignees={task.assignees}
               projectMembers={project.members as any}
             />
-            
-             <h3 className="text-sm font-medium text-muted-foreground mb-2">
-                Priority
-              </h3>
+
+            <h3 className="text-sm font-medium text-muted-foreground mb-2">
+              Priority
+            </h3>
             <TaskPrioritySelector priority={task.priority} taskId={task._id} />
 
             <SubTasksDetails subTasks={task.subtasks || []} taskId={task._id} />

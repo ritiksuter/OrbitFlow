@@ -53,11 +53,11 @@ export const SidebarComponent = ({
       href: "/settings",
       icon: Settings,
     },
-    {
-      title: "Chat",
-      href: "/chat",
-      icon: MessageCircle,
-    },
+    // {
+    //   title: "Chat",
+    //   href: "/chat",
+    //   icon: MessageCircle,
+    // },
     // {
     //   title: "Achieved",
     //   href: `/achieved`,
@@ -78,7 +78,7 @@ export const SidebarComponent = ({
             <div className="flex items-center gap-2">
               <Wrench className="size-6 text-blue-600" />
               <span className="font-semibold text-lg hidden md:block">
-                TaskHuh
+                OrbitFlow
               </span>
             </div>
           )}

@@ -33,7 +33,6 @@ export default [
     route("my-tasks", "routes/dashboard/my-tasks.tsx"),
     route("members", "routes/dashboard/members.tsx"),
     route("settings", "routes/dashboard/settings.tsx"),
-    route("chat", "src/pages/Chat.tsx"),
   ]),
 
   route(
