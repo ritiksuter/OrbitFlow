@@ -1,87 +1,117 @@
-# Welcome to React Router!
+# OrbitFlow Frontend
 
-A modern, production-ready template for building full-stack React applications using React Router.
+This is the React frontend for OrbitFlow. It is built with React Router v7, TypeScript, React Query, Tailwind CSS, and SSR support through `@react-router/dev`.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## Overview
 
-## Features
+- React 19 application
+- Server-side rendering enabled by default
+- Client-side routes under `app/routes/`
+- Global API client in `app/lib/fetch-util.ts`
+- Authentication and workspace/task data fetched via REST API
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+## Project Structure
+
+```text
+frontend/
+├─ app/                # React entrypoints, routes, components, hooks, and providers
+├─ public/             # Static public assets
+├─ src/                # Additional frontend helpers and shared components
+├─ .env                # runtime env for API base URL
+├─ Dockerfile          # production container build
+├─ package.json
+├─ tsconfig.json
+├─ vite.config.ts      # Vite plugins and build configuration
+└─ react-router.config.ts # SSR configuration for React Router
+```
 
 ## Getting Started
 
-### Installation
-
-Install the dependencies:
+### Install dependencies
 
 ```bash
+cd frontend
 npm install
 ```
 
-### Development
+### Configure environment
 
-Start the development server with HMR:
+Create or update `.env` with the backend URL:
+
+```env
+VITE_API_URL=http://localhost:8000/api-v1
+```
+
+### Run in development
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+Open the URL shown by Vite, typically `http://localhost:5173`.
 
-## Building for Production
+## Build and Preview
 
-Create a production build:
+### Build for production
 
 ```bash
 npm run build
 ```
 
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
+### Start the production server
 
 ```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+npm run start
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+The production server uses the bundled React Router app from `build/server/index.js`.
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+## API Integration
 
-### DIY Deployment
+The frontend uses `app/lib/fetch-util.ts` to call backend APIs. It reads `VITE_API_URL` and defaults to `http://localhost:8000/api-v1`.
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
+The client also attaches a Bearer token from `localStorage` to all requests.
 
-Make sure to deploy the output of `npm run build`
+## Key Frontend Features
 
+- Auth flows: login, register, forgot password, reset password, verify email
+- Workspace management: create workspaces, invite members, view workspace details
+- Project and task management: create projects, create tasks, update task title/status/priority/assignees
+- Comments, subtasks, activity feed, and watch/achieve task flows
+- React Query for data fetching and caching
+- Tailwind CSS utility styling
+
+## Docker
+
+Build the container:
+
+```bash
+docker build -t orbitflow-frontend .
 ```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+
+Run the container:
+
+```bash
+docker run -p 4173:4173 orbitflow-frontend
 ```
 
-## Styling
+> Ensure `VITE_API_URL` is set to the backend service URL before running in a container.
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+## Useful Scripts
 
----
+```bash
+npm run dev     # development server
+npm run build   # production bundle
+npm run start   # serve production bundle
+npm run typecheck # run type generation and TypeScript checks
+```
 
-Built with ❤️ using React Router.
+## Notes
+
+- The app is configured for SSR through `react-router.config.ts`.
+- Main HTML layout and error handling are in `app/root.tsx`.
+- API requests are centralized in `app/lib/fetch-util.ts`.
+
+## Contributing
+
+Add new UI routes in `app/routes/`, keep request logic in `app/hooks/`, and validate backend calls through `app/lib/fetch-util.ts`.

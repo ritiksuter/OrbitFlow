@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orbitflow-backend
+  namespace: orbitflow
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: orbitflow-backend
+  template:
+    metadata:
+      labels:
+        app: orbitflow-backend
+    spec:
+      containers:
+        - name: backend
+          image: ritiksuteri/orbitflow-backend:latest
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 8000
+
+          env:
+            - name: PORT
+              value: "8000"
+
+            - name: CORS_ORIGIN
+              value: "*"
+
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: MONGODB_URI
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: JWT_SECRET
+
+            - name: EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: EMAIL
+
+            - name: EMAIL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: EMAIL_PASS
+
+            - name: ARCJET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: ARCJET_KEY
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
