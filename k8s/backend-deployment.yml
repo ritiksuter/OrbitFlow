@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ritiksuteri/orbitflow-backend:v2
+          image: ritiksuteri/orbitflow-backend:v4
           imagePullPolicy: Always
 
           ports:
