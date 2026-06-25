@@ -18,17 +18,22 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ritiksuteri/orbitflow-frontend:latest
+          image: ritiksuteri/orbitflow-frontend:v2
           imagePullPolicy: Always
 
           ports:
             - containerPort: 3000
 
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "100m"
+          env:
+            - name: VITE_API_URL
+              value: "http://localhost:8000/api-v1"
 
-            limits:
-              memory: "256Mi"
-              cpu: "250m"
+
+
+          # resources:
+          #   requests:
+          #     cpu: "200m"
+          #     memory: "512Mi"
+          #   limits:
+          #     cpu: "1000m"
+          #     memory: "1Gi"
