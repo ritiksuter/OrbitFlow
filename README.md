@@ -1,178 +1,184 @@
 # OrbitFlow
 
-A full-stack task and workspace management application with separate frontend and backend services.
+OrbitFlow is a full-stack team collaboration platform for creating workspaces, managing projects, organizing tasks, and tracking activity across a product team. The application is split into a Node.js/Express backend and a React Router 7 frontend.
 
-- `backend/` contains the Node.js Express API, MongoDB integration, authentication, and notification utilities.
-- `frontend/` contains the React application built with React Router, TypeScript, and modern UI components.
+## Highlights
+
+- Authentication flows for registration, login, email verification, and password reset
+- Workspace and project management for team-based collaboration
+- Task management with title, description, status, priority, assignees, subtasks, comments, and watchers
+- Activity tracking and invite-based workspace onboarding
+- Modern UI built with React, TypeScript, Tailwind CSS, and Radix UI primitives
+
+## Tech Stack
+
+### Backend
+
+- Node.js
+- Express
+- MongoDB with Mongoose
+- JWT authentication
+- bcrypt for password hashing
+- Zod for request validation
+- Nodemailer for email delivery
+- Arcjet for request protection
+
+### Frontend
+
+- React 19
+- React Router 7
+- TypeScript
+- TanStack React Query
+- Tailwind CSS
+- Radix UI + MUI components
+- Recharts for analytics visuals
 
 ## Project Structure
 
 ```text
 OrbitFlow/
-├─ backend/      # Express API service
-├─ frontend/     # React application
+├─ backend/             # Express API service
+│  ├─ src/              # Controllers, models, routes, middleware, utils
+│  └─ package.json
+├─ frontend/            # React Router frontend
+│  ├─ app/              # Routes, layouts, providers, hooks, components
+│  └─ package.json
+├─ docker-compose.yml   # Local container orchestration
+├─ k8s/                 # Kubernetes manifests
+└─ README.md
 ```
 
 ## Prerequisites
 
-- Node.js (18+ recommended)
+- Node.js 18+ recommended
 - npm
-- MongoDB instance or Atlas connection
+- A MongoDB instance or MongoDB Atlas connection
+- Docker (optional, for container-based runs)
 
 ## Backend Setup
 
-1. Open a terminal in `backend/`
-2. Install dependencies:
+1. Change into the backend folder:
 
 ```bash
 cd backend
 npm install
 ```
 
-3. Create a `.env` file from `.env.sample` and set values:
+2. Create a backend environment file:
 
 ```bash
-cp .env.sample .env
+cat > .env <<'EOF'
+PORT=8000
+MONGODB_URI=mongodb://127.0.0.1:27017
+JWT_SECRET=your-jwt-secret
+CORS_ORIGIN=http://localhost:5173
+FRONTEND_URL=http://localhost:5173
+EMAIL=your-email@example.com
+EMAIL_PASS=your-email-password-or-app-password
+ARCJET_KEY=your-arcjet-key
+EOF
 ```
 
-4. Update `.env` with your environment details:
-
-- `CORS_ORIGIN` - allowed frontend origin
-- `MONGODB_URI` - MongoDB connection string
-- `PORT` - backend server port
-- `JWT_SECRET` - secret key for JWT signing
-- `EMAIL` - email account for outgoing messages
-- `EMAIL_PASS` - email app password / SMTP auth token
-- `ARCJET_KEY` - Arcjet API key if required
-
-5. Start backend development server:
+3. Start the backend:
 
 ```bash
 npm run dev
 ```
 
-The backend entry point is `src/index.js`.
+The backend runs on port 8000 and exposes the API under `/api-v1`.
 
 ## Frontend Setup
 
-1. Open a terminal in `frontend/`
-2. Install dependencies:
+1. Change into the frontend folder:
 
 ```bash
 cd frontend
 npm install
 ```
 
-3. Start the frontend development server:
+2. Create a frontend environment file:
+
+```bash
+cat > .env <<'EOF'
+VITE_API_URL=/api-v1
+EOF
+```
+
+3. Start the frontend:
 
 ```bash
 npm run dev
 ```
 
-The frontend is built using React Router with a modern SPA architecture. The main application root is `app/root.tsx`.
+Open the local Vite URL shown in the terminal, usually `http://localhost:5173`.
 
-## Running the App Locally
+## Running Locally
 
-Run both services in separate terminals:
+Run the backend and frontend in separate terminals:
 
 ```bash
+# Terminal 1
 cd backend
 npm run dev
 ```
 
 ```bash
+# Terminal 2
 cd frontend
 npm run dev
 ```
 
-Then open the frontend URL shown by Vite (typically `http://localhost:5173`).
-
-> Ensure `CORS_ORIGIN` in `backend/.env` matches the frontend URL.
-
-## Production Builds
+## Production Build
 
 ### Backend
 
-Production deployment typically uses the compiled Node.js app from `backend/src`.
+```bash
+cd backend
+npm run start
+```
 
 ### Frontend
-
-Build the frontend for production:
 
 ```bash
 cd frontend
 npm run build
+npm run start
 ```
 
-Then deploy the generated build output using your chosen hosting provider.
+## Docker Compose
 
-## Docker
-
-This repository includes Dockerfiles for both services and a `docker-compose.yml` at the project root to run them together.
-
-### Build images (optional)
-
-Build the backend and frontend images locally (tags match `docker-compose.yml`):
-
-```bash
-docker build -t ritiksuteri/orbitflow-backend:latest ./backend
-docker build -t ritiksuteri/orbitflow-frontend:latest ./frontend
-```
-
-### Run with docker-compose
-
-Start both services with Docker Compose (builds images if needed):
+This repository includes Dockerfiles for both services and a compose configuration for running everything together.
 
 ```bash
 docker compose up --build -d
 ```
 
-View logs:
+Useful commands:
 
 ```bash
 docker compose logs -f
-```
-
-Stop and remove containers:
-
-```bash
 docker compose down
 ```
 
-### Notes
+## API Overview
 
-- The `backend` service reads environment variables from `./backend/.env` as referenced in `docker-compose.yml`. Create or update `backend/.env` (you can copy from `.env.sample` if present).
-- The backend Dockerfile exposes port `8000`; the frontend Dockerfile exposes port `5173`. The compose file maps these to the same host ports by default.
-- Backend image: `ritiksuteri/orbitflow-backend:latest` (built from `backend/Dockerfile`).
-- Frontend image: `ritiksuteri/orbitflow-frontend:latest` (built from `frontend/Dockerfile`).
+The backend provides REST endpoints for:
+
+- Authentication: register, login, verify email, reset password
+- Users: profile management and password changes
+- Workspaces: create workspaces and manage members/invites
+- Projects: create and view projects inside workspaces
+- Tasks: create, update, comment on, watch, and complete tasks
 
 ## Notes
 
-- The backend uses `express`, `mongoose`, `jsonwebtoken`, `bcrypt`, `cors`, and email utilities.
-- The frontend uses React 19, React Router 7, React Query, MUI, Radix UI primitives, and TypeScript.
-- There is no root-level package; install and run each service inside its own folder.
+- The backend entry point is [backend/src/index.js](backend/src/index.js).
+- The frontend application entry is [frontend/app/root.tsx](frontend/app/root.tsx).
+- Each service manages its own dependencies and scripts independently.
 
-## Useful Commands
 
-### Backend
+## Dashboard
+![alt text](<Screenshot from 2026-06-30 02-10-58.png>)
 
-```bash
-cd backend
-npm install
-npm run dev
-npm run start
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-npm run build
-npm run start
-```
-
-## License
-
-This repository does not specify a license.
+## Workspace
+![alt text](image.png)
