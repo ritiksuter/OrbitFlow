@@ -5,35 +5,27 @@ metadata:
   namespace: orbitflow
 spec:
   replicas: 2
-
   selector:
     matchLabels:
       app: orbitflow-frontend
-
   template:
     metadata:
       labels:
         app: orbitflow-frontend
-
     spec:
       containers:
         - name: frontend
-          image: ritiksuteri/orbitflow-frontend:v4
+          image: ritiksuteri/orbitflow-frontend:81c594f
           imagePullPolicy: Always
-
           ports:
             - containerPort: 3000
-
           env:
             - name: VITE_API_URL
               value: "/api-v1"
-
-
-
-          # resources:
-          #   requests:
-          #     cpu: "200m"
-          #     memory: "512Mi"
-          #   limits:
-          #     cpu: "1000m"
-          #     memory: "1Gi"
+# resources:
+#   requests:
+#     cpu: "200m"
+#     memory: "512Mi"
+#   limits:
+#     cpu: "1000m"
+#     memory: "1Gi"
