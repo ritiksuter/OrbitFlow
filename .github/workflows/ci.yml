@@ -77,7 +77,7 @@ jobs:
           IMAGE: ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.TAG }}
         run: |
           yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' \
-          k8s/backend-deployment.yaml
+          k8s/backend-deployment.yml
 
 
       - name: Configure Git
