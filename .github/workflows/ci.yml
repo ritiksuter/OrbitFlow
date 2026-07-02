@@ -89,10 +89,10 @@ jobs:
       - name: Commit Manifest
         working-directory: .
         run: |
-          git add k8s/backend-deployment.yaml
+          git add k8s/backend-deployment.yml
           git commit -m "ci: update backend image to ${{ steps.vars.outputs.TAG }}" || echo "Nothing to commit"
 
-          
+
       - name: Push Changes
         working-directory: .
         run: |
