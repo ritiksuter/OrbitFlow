@@ -222,3 +222,63 @@ flowchart TD
 - The main backend entry point is backend/src/index.js.
 - The main frontend entry point is frontend/app/root.tsx.
 - The project is designed to be extended for real-world team collaboration, reporting, and workflow automation.
+
+## CI/CD (GitOps) Overview
+
+The repository includes a GitHub Actions workflow (`.github/workflows/ci.yml`) that builds, scans, and publishes container images, updates Kubernetes manifests, and drives a GitOps-based deployment via ArgoCD.
+
+```text
+            Developer
+               │
+           git push main
+               │
+               ▼
+        GitHub Repository (Source Code)
+               │
+               ▼
+       GitHub Actions (CI)
+               │
+    ┌───────────────────────────────┐
+    │ Checkout                      │
+    │ Setup Node                    │
+    │ npm install                   │
+    │ Docker Build                  │
+    │ Trivy Scan                    │
+    │ Push Docker Image             │
+    │ Update K8s Manifest (yq)      │
+    │ Commit & Push                 │
+    └───────────────────────────────┘
+               │
+               ▼
+        GitHub Repository (GitOps)
+               │
+               ▼
+           ArgoCD watches Git
+               │
+               ▼
+        Detect Manifest Change
+               │
+               ▼
+       Sync Kind Kubernetes Cluster
+               │
+               ▼
+       Rolling Update Deployment
+               │
+               ▼
+           New Pods Running
+```
+
+How it works:
+
+- Push to `main` triggers the CI workflow at `.github/workflows/ci.yml`.
+- The workflow builds Docker images, runs a Trivy vulnerability scan, and pushes the image to the configured container registry.
+- The workflow updates the Kubernetes manifests (using `yq`), commits those changes back to the repository, and pushes to the GitOps branch/path.
+- ArgoCD monitors the Git repository, detects manifest changes, and performs a sync to the Kubernetes cluster (Kind in our setup), resulting in a rolling update of deployments.
+
+Quick references:
+
+- Workflow file: [.github/workflows/ci.yml](.github/workflows/ci.yml)
+- Kubernetes manifests: [k8s/](k8s/)
+- To trigger manually: push to the `main` branch or run the workflow from the Actions tab.
+
+If you'd like, I can add a workflow badge (requires repository owner/name) and commit the README changes to a branch for review.
