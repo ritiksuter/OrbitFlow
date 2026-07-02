@@ -63,11 +63,13 @@ jobs:
           docker push \
           $IMAGE_NAME:${{ steps.vars.outputs.TAG }}
 
+
       - name: Install yq
         run: |
           sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
           -O /usr/local/bin/yq
           sudo chmod +x /usr/local/bin/yq
+
 
       - name: Update Kubernetes Deployment
         working-directory: .
@@ -76,6 +78,7 @@ jobs:
         run: |
           yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' \
           k8s/backend-deployment.yaml
+
 
       - name: Configure Git
         working-directory: .
@@ -89,6 +92,7 @@ jobs:
           git add k8s/backend-deployment.yaml
           git commit -m "ci: update backend image to ${{ steps.vars.outputs.TAG }}" || echo "Nothing to commit"
 
+          
       - name: Push Changes
         working-directory: .
         run: |
