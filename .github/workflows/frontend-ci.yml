@@ -95,4 +95,5 @@ jobs:
       - name: Push Changes
         working-directory: .
         run: |
-          git push origin main
+            git pull --rebase origin main
+            git push origin HEAD:main
